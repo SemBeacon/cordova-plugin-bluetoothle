@@ -799,7 +799,7 @@ declare namespace BluetoothlePlugin {
 
     interface AdvertisingParamsAndroid {
         /** Service UUID on Android */
-        service: string,
+        service?: string,
         /** not documented */
         mode?: AdvertiseMode,
         /** not documented */
@@ -815,14 +815,22 @@ declare namespace BluetoothlePlugin {
         /** not documented */
         includeDeviceName: boolean,
         /** not documented */
-        includeTxPowerLevel: boolean
+        includeTxPowerLevel: boolean,
+        /**
+         * Raw advertisement
+         */
+        rawAdvertisement?: Buffer,
+        /**
+         * Raw scan response
+         */
+        rawScanResponseData?: Buffer
     }
 
     interface AdvertisingParamsIOS {
         /** Array of service UUIDs on iOS */
         services: string[],
         /** device's name */
-        name?: string
+        name?: string,
     }
 
     interface CommonInfo {
