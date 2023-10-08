@@ -1061,4 +1061,5 @@ interface Window {
     bluetoothle: BluetoothlePlugin.Bluetoothle
 }
 
-declare var bluetoothle: BluetoothlePlugin.Bluetoothle;
+export default bluetoothle;
+

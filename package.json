@@ -40,7 +40,7 @@
   "author": "Rand Dusing",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/randdusing/cordova-plugin-bluetoothle/issues"
+    "url": "https://github.com/SemBeacon/cordova-plugin-bluetoothle/issues"
   },
-  "homepage": "https://github.com/randdusing/cordova-plugin-bluetoothle#readme"
+  "homepage": "https://github.com/SemBeacon/cordova-plugin-bluetoothle#readme"
 }
