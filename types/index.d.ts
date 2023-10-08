@@ -819,11 +819,11 @@ declare namespace BluetoothlePlugin {
         /**
          * Raw advertisement
          */
-        rawAdvertisement?: Buffer,
+        rawAdvertisement?: Uint8Array,
         /**
          * Raw scan response
          */
-        rawScanResponseData?: Buffer
+        scanResponse?: Uint8Array
     }
 
     interface AdvertisingParamsIOS {

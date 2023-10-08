@@ -747,8 +747,8 @@ public class BluetoothLePlugin extends CordovaPlugin {
     AdvertiseSettings advertiseSettings = settingsBuilder.build();
 
     // First check if raw advertisement and/or scan response is provided before building
-    byte[] rawAdvertisementData = getPropertyBytes(obj, "rawAdvertisementData");
-    byte[] rawScanResponseData = getPropertyBytes(obj, "rawScanResponseData");
+    byte[] rawAdvertisementData = getPropertyBytes(obj, "rawAdvertisement");
+    byte[] rawScanResponseData = getPropertyBytes(obj, "scanResponse");
     if (rawAdvertisementData != null) {
       advertiseCallbackContext = callbackContext;
       advertiser.startAdvertising(advertiseSettings, 
