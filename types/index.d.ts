@@ -806,6 +806,7 @@ export declare namespace BluetoothlePlugin {
         mode?: AdvertiseMode,
         /** not documented */
         connectable?: boolean,
+        discoverable?: boolean,
         /** not documented */
         timeout?: number,
         /** not documented */
