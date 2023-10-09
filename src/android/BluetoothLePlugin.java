@@ -731,7 +731,9 @@ public class BluetoothLePlugin extends CordovaPlugin {
       return;
     }
     String adapterName = obj.optString("name");
-    bluetoothAdapter.setName(adapterName);
+    if (adapterName != null) {
+      bluetoothAdapter.setName(adapterName);
+    }
 
     settingsBuilder.setTimeout(timeout);
 
@@ -777,8 +779,8 @@ public class BluetoothLePlugin extends CordovaPlugin {
       }
     }
 
-    dataBuilder.setIncludeDeviceName(obj.optBoolean("includeDeviceName", true));
-    dataBuilder.setIncludeTxPowerLevel(obj.optBoolean("includeTxPowerLevel", true));
+    dataBuilder.setIncludeDeviceName(obj.optBoolean("includeDeviceName", false));
+    dataBuilder.setIncludeTxPowerLevel(obj.optBoolean("includeTxPowerLevel", false));
 
     AdvertiseData advertiseData = dataBuilder.build();
     return advertiseData;
