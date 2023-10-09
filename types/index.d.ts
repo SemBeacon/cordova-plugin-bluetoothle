@@ -550,7 +550,8 @@ declare namespace BluetoothlePlugin {
         startAdvertising(
             success: (result: { status: Status}) => void,
             error: (error: Error) => void,
-            params: AdvertisingParams): void;
+            params: AdvertisingParams,
+            scanResponse?: AdvertisingParams): void;
 
         /**
          * Stop advertising
@@ -608,7 +609,7 @@ declare namespace BluetoothlePlugin {
         setPin(
             success: (result: { status:Status }) => void,
             error: (error: Error) => void,
-            params: { address: string, pin:string }): void;
+            params: { address: string, pin: string }): void;
 
         /**
          * Helper function to convert a base64 encoded string from a characteristic or descriptor value into a uint8Array object
@@ -800,6 +801,7 @@ declare namespace BluetoothlePlugin {
     interface AdvertisingParamsAndroid {
         /** Service UUID on Android */
         service?: string,
+        serviceData?: any,
         /** not documented */
         mode?: AdvertiseMode,
         /** not documented */
@@ -813,17 +815,9 @@ declare namespace BluetoothlePlugin {
         /** not documented */
         manufacturerSpecificData?: any,
         /** not documented */
-        includeDeviceName: boolean,
+        includeDeviceName?: boolean,
         /** not documented */
-        includeTxPowerLevel: boolean,
-        /**
-         * Raw advertisement
-         */
-        rawAdvertisement?: Uint8Array,
-        /**
-         * Raw scan response
-         */
-        scanResponse?: Uint8Array
+        includeTxPowerLevel?: boolean,
     }
 
     interface AdvertisingParamsIOS {
@@ -1061,5 +1055,4 @@ interface Window {
     bluetoothle: BluetoothlePlugin.Bluetoothle
 }
 
-export default bluetoothle;
-
+export declare var bluetoothle: BluetoothlePlugin.Bluetoothle;

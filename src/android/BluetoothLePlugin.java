@@ -689,7 +689,8 @@ public class BluetoothLePlugin extends CordovaPlugin {
   }
 
   private void startAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
-    JSONObject obj = getArgsObject(args);
+    JSONObject obj = getArgsObject(args, 0);
+    JSONObject scanResponse = getArgsObject(args, 1);
     if (isNotArgsObject(obj, callbackContext)) {
       return;
     }
@@ -745,19 +746,19 @@ public class BluetoothLePlugin extends CordovaPlugin {
     }
     settingsBuilder.setTxPowerLevel(txPowerLevel);
     AdvertiseSettings advertiseSettings = settingsBuilder.build();
+    
+    AdvertiseData advertiseData = extractAdvertiseData(obj);
+    advertiseCallbackContext = callbackContext;
 
-    // First check if raw advertisement and/or scan response is provided before building
-    byte[] rawAdvertisementData = getPropertyBytes(obj, "rawAdvertisement");
-    byte[] rawScanResponseData = getPropertyBytes(obj, "scanResponse");
-    if (rawAdvertisementData != null) {
-      advertiseCallbackContext = callbackContext;
-      advertiser.startAdvertising(advertiseSettings, 
-        rawAdvertisementData, 
-        rawScanResponseData,
-        advertiseCallback);
-      return;
+    if (scanResponse != null) {
+      AdvertiseData scanResponseData = extractAdvertiseData(scanResponse);
+      advertiser.startAdvertising(advertiseSettings, advertiseData, scanResponseData, advertiseCallback);
+    } else {
+      advertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
     }
+  }
 
+  private AdvertiseData extractAdvertiseData(JSONObject obj) {
     AdvertiseData.Builder dataBuilder = new AdvertiseData.Builder();
 
     int manufacturerId = obj.optInt("manufacturerId", 0);
@@ -777,14 +778,10 @@ public class BluetoothLePlugin extends CordovaPlugin {
     }
 
     dataBuilder.setIncludeDeviceName(obj.optBoolean("includeDeviceName", true));
-
     dataBuilder.setIncludeTxPowerLevel(obj.optBoolean("includeTxPowerLevel", true));
 
     AdvertiseData advertiseData = dataBuilder.build();
-
-    advertiseCallbackContext = callbackContext;
-
-    advertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
+    return advertiseData;
   }
 
   private void stopAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
@@ -3828,13 +3825,17 @@ public class BluetoothLePlugin extends CordovaPlugin {
   }
 
   private JSONObject getArgsObject(JSONArray args) {
-    if (args.length() == 1) {
+    return getArgsObject(args, 0);
+  }
+
+  private JSONObject getArgsObject(JSONArray args, int index) {
+    if (args.length() >= index + 1) {
       try {
-        return args.getJSONObject(0);
+        return args.getJSONObject(index);
       } catch (JSONException ex) {
+        // Ignore
       }
     }
-
     return null;
   }
 

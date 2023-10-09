@@ -365,8 +365,9 @@ BluetoothlePlugin.Bluetoothle.prototype.removeAllServices = function (success, e
  * @param {function(result:[object Object])} success
  * @param {function(error:BluetoothlePlugin.Error)} error
  * @param {BluetoothlePlugin.AdvertisingParams} params
+ * @param {BluetoothlePlugin.AdvertisingParams} [scanResponse]
  */
-BluetoothlePlugin.Bluetoothle.prototype.startAdvertising = function (success, error, params) { };
+BluetoothlePlugin.Bluetoothle.prototype.startAdvertising = function (success, error, params, scanResponse) { };
 
 
 /**

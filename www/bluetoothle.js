@@ -186,8 +186,8 @@ var bluetoothle = {
   removeAllServices: function(successCallback, errorCallback, params) {
     cordova.exec(successCallback, errorCallback, bluetoothleName, "removeAllServices", [params]);
   },
-  startAdvertising: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "startAdvertising", [params]);
+  startAdvertising: function(successCallback, errorCallback, params, scanResponse) {
+    cordova.exec(successCallback, errorCallback, bluetoothleName, "startAdvertising", [params, scanResponse]);
   },
   stopAdvertising: function(successCallback, errorCallback, params) {
     cordova.exec(successCallback, errorCallback, bluetoothleName, "stopAdvertising", [params]);
