@@ -720,8 +720,8 @@ public class BluetoothLePlugin extends CordovaPlugin {
     boolean connectable = obj.optBoolean("connectable", false);
     settingsBuilder.setConnectable(connectable);
 
-    boolean discoverable = obj.optBoolean("discoverable", false);
-    settingsBuilder.setDiscoverable(discoverable);
+    // boolean discoverable = obj.optBoolean("discoverable", false);
+    // settingsBuilder.setDiscoverable(discoverable);
 
     int timeout = obj.optInt("timeout", 0);
     if (timeout < 0 || timeout > 180000) {
