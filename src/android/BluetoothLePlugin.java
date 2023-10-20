@@ -686,7 +686,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
     callbackContext.success(returnObj);
   }
 
-  private int startAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
+  private void startAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
     JSONObject obj = getArgsObject(args, 0);
     JSONObject scanResponse = getArgsObject(args, 1);
     if (isNotArgsObject(obj, callbackContext)) {
