@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -75,7 +76,6 @@ public class BluetoothLePlugin extends CordovaPlugin {
   private CallbackContext initPeripheralCallback;
   private BluetoothGattServer gattServer;
   private CallbackContext addServiceCallback;
-  private CallbackContext advertiseCallbackContext;
   private boolean isAdvertising = false;
 
   //Store connections and all their callbacks
@@ -301,8 +301,6 @@ public class BluetoothLePlugin extends CordovaPlugin {
     }
 
     createScanCallback();
-
-    createAdvertiseCallback();
   }
 
   //Actions
@@ -688,7 +686,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
     callbackContext.success(returnObj);
   }
 
-  private void startAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
+  private int startAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
     JSONObject obj = getArgsObject(args, 0);
     JSONObject scanResponse = getArgsObject(args, 1);
     if (isNotArgsObject(obj, callbackContext)) {
@@ -753,13 +751,15 @@ public class BluetoothLePlugin extends CordovaPlugin {
     AdvertiseSettings advertiseSettings = settingsBuilder.build();
     
     AdvertiseData advertiseData = extractAdvertiseData(obj);
-    advertiseCallbackContext = callbackContext;
+    AdvertiseCallback callback = createAdvertiseCallback(callbackContext);
+    
+    advertiseCallbacks.put(obj.optString("identifier", ""), callback);
 
     if (scanResponse != null) {
       AdvertiseData scanResponseData = extractAdvertiseData(scanResponse);
-      advertiser.startAdvertising(advertiseSettings, advertiseData, scanResponseData, advertiseCallback);
+      advertiser.startAdvertising(advertiseSettings, advertiseData, scanResponseData, callback);
     } else {
-      advertiser.startAdvertising(advertiseSettings, advertiseData, advertiseCallback);
+      advertiser.startAdvertising(advertiseSettings, advertiseData, callback);
     }
   }
 
@@ -801,7 +801,19 @@ public class BluetoothLePlugin extends CordovaPlugin {
       return;
     }
 
-    advertiser.stopAdvertising(advertiseCallback);
+    JSONObject obj = getArgsObject(args);
+    if (obj != null && obj.optString("identifier", null) != null) {
+      String identifier = obj.optString("identifier", null);
+      AdvertiseCallback callback = advertiseCallbacks.get(identifier);
+      advertiser.stopAdvertising(callback);
+      advertiseCallbacks.remove(callback);
+    } else {
+      // Stop all
+      advertiseCallbacks.forEach((key, value) -> {
+        advertiser.stopAdvertising(value);
+      });
+      advertiseCallbacks.clear();
+    }
 
     if (isAdvertising) isAdvertising = false;
 
@@ -3112,7 +3124,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
 
   //API 21+ Scan and Advertise Callbacks
   private ScanCallback scanCallback = null;
-  private AdvertiseCallback advertiseCallback = null;
+  private Map<Integer, AdvertiseCallback> advertiseCallbacks = new HashMap();
 
   private void createScanCallback() {
     scanCallback = new ScanCallback() {
@@ -3172,8 +3184,8 @@ public class BluetoothLePlugin extends CordovaPlugin {
     };
   }
 
-  private void createAdvertiseCallback() {
-    advertiseCallback = new AdvertiseCallback() {
+  private AdvertiseCallback createAdvertiseCallback(CallbackContext advertiseCallbackContext) {
+    AdvertiseCallback advertiseCallback = new AdvertiseCallback() {
       @Override
       public void onStartFailure(int errorCode) {
         isAdvertising = false;
@@ -3222,6 +3234,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
         advertiseCallbackContext = null;
       }
     };
+    return advertiseCallback;
   }
 
   private String formatUuid(UUID uuid) {

@@ -545,7 +545,6 @@ export declare namespace BluetoothlePlugin {
          * @param success The success callback that is passed with device's status
          * @param error   The callback that will be triggered when startAdvertising operation fails
          * @param params  Advertising params
-         *
          */
         startAdvertising(
             success: (result: { status: Status}) => void,
@@ -557,11 +556,12 @@ export declare namespace BluetoothlePlugin {
          * Stop advertising
          * @param success The success callback that is passed with device's status
          * @param error   The callback that will be triggered when stopAdvertising operation fails
-         *
+         * @param {string} [identifier] Optional advertising id to only stop one advertisement
          */
         stopAdvertising(
             success: (status: Status) => void,
-            error: (error: Error) => void): void;
+            error: (error: Error) => void,
+            params?: { identifier?: number }): void;
 
         /**
          * Determine if app is advertising or not.
@@ -799,6 +799,7 @@ export declare namespace BluetoothlePlugin {
     type TxPowerLevel = "high" | "low" | "ultralow" | "medium";
 
     interface AdvertisingParamsAndroid {
+        identifier: string,
         /** Service UUID on Android */
         service?: string,
         serviceData?: any,
