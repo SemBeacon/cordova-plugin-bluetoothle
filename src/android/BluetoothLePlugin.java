@@ -3124,7 +3124,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
 
   //API 21+ Scan and Advertise Callbacks
   private ScanCallback scanCallback = null;
-  private Map<Integer, AdvertiseCallback> advertiseCallbacks = new HashMap();
+  private Map<String, AdvertiseCallback> advertiseCallbacks = new HashMap();
 
   private void createScanCallback() {
     scanCallback = new ScanCallback() {
