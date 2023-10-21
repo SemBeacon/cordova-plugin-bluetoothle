@@ -422,7 +422,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
     } else if ("stopAdvertising".equals(action)) {
       stopAdvertisingAction(args, callbackContext);
     } else if ("isAdvertising".equals(action)) {
-      isAdvertisingAction(callbackContext);
+      isAdvertisingAction(args, callbackContext);
     } else if ("respond".equals(action)) {
       respondAction(args, callbackContext);
     } else if ("notify".equals(action)) {
@@ -818,13 +818,13 @@ public class BluetoothLePlugin extends CordovaPlugin {
     callbackContext.success(returnObj);
   }
 
-  private void isAdvertisingAction(CallbackContext callbackContext) {
+  private void isAdvertisingAction(JSONArray args, CallbackContext callbackContext) {
     JSONObject returnObj = new JSONObject();
 
     JSONObject obj = getArgsObject(args);
     if (obj != null && obj.optString("identifier", null) != null) {
       String identifier = obj.optString("identifier", null);
-      addProperty(returnObj, "isAdvertising", advertiseCallbacks.has(identifier));
+      addProperty(returnObj, "isAdvertising", advertiseCallbacks.containsKey(identifier));
     } else {
       addProperty(returnObj, "isAdvertising", advertiseCallbacks.size() > 0);
     }
@@ -3192,7 +3192,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
       public void onStartFailure(int errorCode) {
         // Remove callback
         advertiseCallbacks.remove(identifier);
-        
+
         if (advertiseCallbackContext == null)
           return;
 
@@ -3233,7 +3233,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
         advertiseCallbackContext.success(returnObj);
       }
     };
-    advertiseCallbacks.put(obj.optString("identifier", ""), advertiseCallback);
+    advertiseCallbacks.put(identifier, advertiseCallback);
     return advertiseCallback;
   }
 
