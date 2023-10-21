@@ -193,7 +193,7 @@ var bluetoothle = {
     cordova.exec(successCallback, errorCallback, bluetoothleName, "stopAdvertising", [params]);
   },
   isAdvertising: function(successCallback, errorCallback, params) {
-    cordova.exec(successCallback, errorCallback, bluetoothleName, "isAdvertising", []);
+    cordova.exec(successCallback, errorCallback, bluetoothleName, "isAdvertising", [params]);
   },
   respond: function(successCallback, errorCallback, params) {
     cordova.exec(successCallback, errorCallback, bluetoothleName, "respond", [params]);

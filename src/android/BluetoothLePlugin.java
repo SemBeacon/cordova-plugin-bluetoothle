@@ -76,7 +76,6 @@ public class BluetoothLePlugin extends CordovaPlugin {
   private CallbackContext initPeripheralCallback;
   private BluetoothGattServer gattServer;
   private CallbackContext addServiceCallback;
-  private boolean isAdvertising = false;
 
   //Store connections and all their callbacks
   private HashMap<Object, HashMap<Object, Object>> connections;
@@ -751,9 +750,8 @@ public class BluetoothLePlugin extends CordovaPlugin {
     AdvertiseSettings advertiseSettings = settingsBuilder.build();
     
     AdvertiseData advertiseData = extractAdvertiseData(obj);
-    AdvertiseCallback callback = createAdvertiseCallback(callbackContext);
-    
-    advertiseCallbacks.put(obj.optString("identifier", ""), callback);
+    String identifier = obj.optString("identifier", "");
+    AdvertiseCallback callback = createAdvertiseCallback(identifier, callbackContext);
 
     if (scanResponse != null) {
       AdvertiseData scanResponseData = extractAdvertiseData(scanResponse);
@@ -815,8 +813,6 @@ public class BluetoothLePlugin extends CordovaPlugin {
       advertiseCallbacks.clear();
     }
 
-    if (isAdvertising) isAdvertising = false;
-
     JSONObject returnObj = new JSONObject();
     addProperty(returnObj, "status", "advertisingStopped");
     callbackContext.success(returnObj);
@@ -825,7 +821,13 @@ public class BluetoothLePlugin extends CordovaPlugin {
   private void isAdvertisingAction(CallbackContext callbackContext) {
     JSONObject returnObj = new JSONObject();
 
-    addProperty(returnObj, "isAdvertising", isAdvertising);
+    JSONObject obj = getArgsObject(args);
+    if (obj != null && obj.optString("identifier", null) != null) {
+      String identifier = obj.optString("identifier", null);
+      addProperty(returnObj, "isAdvertising", advertiseCallbacks.has(identifier));
+    } else {
+      addProperty(returnObj, "isAdvertising", advertiseCallbacks.size() > 0);
+    }
 
     callbackContext.success(returnObj);
   }
@@ -2982,7 +2984,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
             scanCallbackContext = null;
 
             // Reset isAdvertising when adapter is off (if STATE_TURNING_OFF doesn't trigger)
-            if (isAdvertising) isAdvertising = false;
+            advertiseCallbacks.clear();
 
             gattServer = null;
 
@@ -2995,7 +2997,7 @@ public class BluetoothLePlugin extends CordovaPlugin {
             break;
           case BluetoothAdapter.STATE_TURNING_OFF:
             // Reset isAdvertising when adapter is turning off
-            if (isAdvertising) isAdvertising = false;
+            advertiseCallbacks.clear();
 
             // Make sure gattServer is not null (in case this triggers when it is null)
             if (gattServer != null) gattServer.close();
@@ -3184,12 +3186,13 @@ public class BluetoothLePlugin extends CordovaPlugin {
     };
   }
 
-  private AdvertiseCallback createAdvertiseCallback(CallbackContext advertiseCallbackContext) {
+  private AdvertiseCallback createAdvertiseCallback(String identifier, CallbackContext advertiseCallbackContext) {
     AdvertiseCallback advertiseCallback = new AdvertiseCallback() {
       @Override
       public void onStartFailure(int errorCode) {
-        isAdvertising = false;
-
+        // Remove callback
+        advertiseCallbacks.remove(identifier);
+        
         if (advertiseCallbackContext == null)
           return;
 
@@ -3211,13 +3214,10 @@ public class BluetoothLePlugin extends CordovaPlugin {
         }
 
         advertiseCallbackContext.error(returnObj);
-        advertiseCallbackContext = null;
       }
 
       @Override
       public void onStartSuccess(AdvertiseSettings settingsInEffect) {
-        isAdvertising = true;
-
         if (advertiseCallbackContext == null)
           return;
 
@@ -3231,9 +3231,9 @@ public class BluetoothLePlugin extends CordovaPlugin {
         addProperty(returnObj, keyStatus, "advertisingStarted");
 
         advertiseCallbackContext.success(returnObj);
-        advertiseCallbackContext = null;
       }
     };
+    advertiseCallbacks.put(obj.optString("identifier", ""), advertiseCallback);
     return advertiseCallback;
   }
 
