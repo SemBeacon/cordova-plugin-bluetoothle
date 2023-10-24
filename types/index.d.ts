@@ -411,8 +411,8 @@ export declare namespace BluetoothlePlugin {
          * @param success The success callback that is passed with request permission value
          */
         requestPermission(
-            success: (result: { requestPermission: boolean },
-            error: (error: Error) => void) => void): void;
+            success: (result: { requestPermission: boolean }) => void,
+            error: (error: Error) => void): void;
 
         /**
          * Determine whether Bluetooth scan privileges are granted since scanning for unpaired devices requires it in Android API 31.
@@ -459,7 +459,8 @@ export declare namespace BluetoothlePlugin {
          * @param success The success callback that is passed with request permission value
          */
         requestPermissionBtAdvertise(
-            success: (result: { requestPermission: boolean }) => void): void;
+            success: (result: { requestPermission: boolean }) => void,
+            error: (error: Error) => void): void;
 
         /**
          * Determine if location services are enabled or not. Location Services are required to find devices in Android API 23
