@@ -411,14 +411,16 @@ export declare namespace BluetoothlePlugin {
          * @param success The success callback that is passed with request permission value
          */
         requestPermission(
-            success: (result: { requestPermission: boolean }) => void): void;
+            success: (result: { requestPermission: boolean },
+            error: (error: Error) => void) => void): void;
 
         /**
          * Determine whether Bluetooth scan privileges are granted since scanning for unpaired devices requires it in Android API 31.
          * @param success The success callback that is passed with has permission value
          */
          hasPermissionBtScan(
-            success: (result: { hasPermission: boolean }) => void): void;
+            success: (result: { hasPermission: boolean }) => void,
+            error: (error: Error) => void,): void;
 
         /**
          * Request Bluetooth scan privileges since scanning for unpaired devices requires it in Android API 31.
@@ -426,7 +428,8 @@ export declare namespace BluetoothlePlugin {
          * @param success The success callback that is passed with request permission value
          */
         requestPermissionBtScan(
-            success: (result: { requestPermission: boolean }) => void): void;
+            success: (result: { requestPermission: boolean }) => void,
+            error: (error: Error) => void): void;
 
         /**
          * Determine whether Bluetooth connect privileges are granted since connecting to devices requires it in Android API 31.
@@ -561,7 +564,7 @@ export declare namespace BluetoothlePlugin {
         stopAdvertising(
             success: (status: Status) => void,
             error: (error: Error) => void,
-            params?: { identifier?: number }): void;
+            params?: { identifier?: string }): void;
 
         /**
          * Determine if app is advertising or not.
@@ -571,7 +574,8 @@ export declare namespace BluetoothlePlugin {
          */
         isAdvertising(
             success: (result: { isAdvertising: boolean }) => void,
-            error: (error: Error) => void): void;
+            error: (error: Error) => void,
+            params?: { identifier?: string }): void;
 
         /**
          * Respond to a read or write request
